@@ -47,6 +47,7 @@ defmodule Getaways.Vacation do
       {:order, order}, query ->
         from p in query, order_by: [{^order, :id}]
     end)
+    |> IO.inspect # prints the built query to iex shell
     |> Repo.all
   end
 
