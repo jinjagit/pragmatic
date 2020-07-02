@@ -22,7 +22,7 @@ defmodule Getaways.Vacation.Place do
   end
 
   def changeset(place, attrs) do
-    required_fields = [:name, :slug, :description, :location, 
+    required_fields = [:name, :description, :location, 
                        :price_per_night, :image, :image_thumbnail]
 
     optional_fields = [:max_guests, :pet_friendly, :pool, :wifi]
@@ -32,5 +32,23 @@ defmodule Getaways.Vacation.Place do
     |> validate_required(required_fields)
     |> unique_constraint(:name)
     |> unique_constraint(:slug)
+    |> slugify_name()
+  end
+
+  defp slugify_name(changeset) do
+    case changeset.valid? do
+      true ->
+        name = get_field(changeset, :name)
+        put_change(changeset, :slug, slugify(name))
+  
+      _ ->
+        changeset
+    end
+  end
+  
+  defp slugify(str) do
+    str
+    |> String.downcase()
+    |> String.replace(~r/[^\w-]+/u, "-")
   end
 end
